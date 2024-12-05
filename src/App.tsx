@@ -65,13 +65,41 @@ function App() {
 
       <div className="max-w-4xl mx-auto relative">
         {/* Header */}
-        <div className="text-center mb-16">
-          <div className="inline-block">
-            <h1 className="text-6xl font-black mb-4 bg-gradient-to-r from-violet-500 via-fuchsia-500 to-blue-500 bg-clip-text text-transparent drop-shadow-2xl">
-              FIND CHEAPEST BTC
+        <div className="text-center mb-16 relative">
+          <div className="absolute inset-0 bg-gradient-to-r from-violet-500/20 via-fuchsia-500/20 to-blue-500/20 blur-3xl -z-10 transform -skew-y-6"></div>
+          <div className="relative">
+            <span className="inline-block text-sm font-semibold text-violet-400 mb-4 tracking-wider animate-float">
+              REAL-TIME CRYPTO COMPARISON
+            </span>
+            <h1 className="text-7xl font-black mb-6 tracking-tight">
+              <span className="inline-block gradient-text animate-pulse-slow">Bitcoin</span>
+              <span className="inline-block ml-4 text-white/90">Rates</span>
             </h1>
+            <p className="text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed">
+              Find the best Bitcoin prices across trusted providers. 
+              <span className="block mt-2 text-violet-400/90">Save money on every transaction.</span>
+            </p>
+            <div className="mt-8 flex justify-center gap-4">
+              <div className="flex items-center gap-2 text-sm text-gray-400">
+                <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                Live Prices
+              </div>
+              <div className="flex items-center gap-2 text-sm text-gray-400">
+                <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                Best Rates
+              </div>
+              <div className="flex items-center gap-2 text-sm text-gray-400">
+                <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                Trusted Providers
+              </div>
+            </div>
           </div>
-          <p className="text-gray-400 text-lg">Compare real-time Bitcoin prices across major providers</p>
         </div>
         
         {/* Input Section */}
