@@ -90,15 +90,75 @@ async def get_paybis_price(amount: float) -> float:
             print(f"Paybis API error: {str(e)}")
             return 0
 
+async def get_transak_price(amount: float) -> float:
+    url = "https://api.transak.com/api/v1/pricing/public/widget/quotes"
+    params = {
+        'fiatCurrency': 'USD',
+        'cryptoCurrency': 'BTC',
+        'paymentMethod': 'credit_debit_card',
+        'isBuyOrSell': 'BUY',
+        'fiatAmount': str(amount),
+        'partnerApiKey': '02624956-010b-4775-8e31-7b9c8b82df76',
+        'network': 'bitcoin',
+        'quoteCountryCode': 'US'
+    }
+    
+    async with httpx.AsyncClient() as client:
+        try:
+            response = await client.get(url, params=params)
+            print(f"Transak request URL: {response.url}")
+            print(f"Transak response: {response.status_code}, {response.text}")
+            if response.status_code == 200:
+                data = response.json()
+                return float(data['response']['cryptoAmount'])
+            print(f"Transak API error: Status {response.status_code}, {response.text}")
+            return 0
+        except Exception as e:
+            print(f"Transak API error: {str(e)}")
+            return 0
+
+async def get_moonpay_price(amount: float) -> float:
+    url = "https://api.moonpay.com/v3/currencies/btc/buy_quote"
+    params = {
+        'apiKey': 'pk_live_R5Lf25uBfNZyKwccAZpzcxuL3ZdJ3Hc',
+        'baseCurrencyAmount': str(amount),
+        'baseCurrencyCode': 'usd',
+        'fixed': 'true',
+        'areFeesIncluded': 'true',
+        'quoteType': 'principal'
+    }
+    
+    async with httpx.AsyncClient() as client:
+        try:
+            response = await client.get(url, params=params)
+            print(f"MoonPay request URL: {response.url}")
+            print(f"MoonPay response: {response.status_code}, {response.text}")
+            if response.status_code == 200:
+                data = response.json()
+                return float(data['quoteCurrencyAmount'])
+            print(f"MoonPay API error: Status {response.status_code}, {response.text}")
+            return 0
+        except Exception as e:
+            print(f"MoonPay API error: {str(e)}")
+            return 0
+
 @app.get("/api/compare/{amount}")
 async def compare_prices(amount: float):
-    # Get prices from both providers
-    guardarian_amount = await get_guardarian_price(amount)
-    paybis_amount = await get_paybis_price(amount)
+    # Get prices from all providers
+    tasks = [
+        get_guardarian_price(amount),
+        get_paybis_price(amount),
+        get_transak_price(amount),
+        get_moonpay_price(amount)
+    ]
+    
+    results = await asyncio.gather(*tasks)
     
     providers = [
-        {"name": "Guardarian", "btc": guardarian_amount},
-        {"name": "Paybis", "btc": paybis_amount}
+        {"name": "Guardarian", "btc": results[0]},
+        {"name": "Paybis", "btc": results[1]},
+        {"name": "Transak", "btc": results[2]},
+        {"name": "MoonPay", "btc": results[3]}
     ]
     
     # Sort providers by BTC amount (highest to lowest)
