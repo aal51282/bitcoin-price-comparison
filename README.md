@@ -40,7 +40,7 @@ A real-time Bitcoin price comparison tool that helps users find the best BTC rat
 
 1. Clone the repository:
 ```bash
-git clone [repository-url]
+git clone https://github.com/aal51282/coins-table
 cd bitcoin-tracker
 ```
 
