@@ -37,101 +37,145 @@ function App() {
 
   const getProviderColor = (index: number): string => {
     const colors = [
-      'from-purple-500 to-blue-500',
-      'from-blue-500 to-cyan-500',
-      'from-cyan-500 to-teal-500',
-      'from-teal-500 to-green-500'
+      'from-violet-500 to-fuchsia-500',
+      'from-blue-500 to-indigo-500',
+      'from-emerald-500 to-teal-500',
+      'from-rose-500 to-pink-500'
     ];
     return colors[index] || colors[0];
   };
 
+  const getBgPattern = (index: number): string => {
+    const patterns = [
+      'radial-gradient(circle at 100% 100%, rgba(167, 139, 250, 0.1) 0%, transparent 50%)',
+      'radial-gradient(circle at 0% 100%, rgba(99, 102, 241, 0.1) 0%, transparent 50%)',
+      'radial-gradient(circle at 100% 0%, rgba(5, 150, 105, 0.1) 0%, transparent 50%)',
+      'radial-gradient(circle at 0% 0%, rgba(244, 63, 94, 0.1) 0%, transparent 50%)'
+    ];
+    return patterns[index] || patterns[0];
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black text-white p-4 md:p-8">
-      <div className="max-w-3xl mx-auto">
+    <div className="min-h-screen bg-[#0A0B1E] bg-gradient-to-br from-gray-900 via-[#1a1b3d] to-black text-white p-4 md:p-8 relative overflow-hidden">
+      {/* Background decorative elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-to-br from-purple-500/10 to-transparent rotate-12 transform scale-150" />
+        <div className="absolute -bottom-1/2 -right-1/2 w-full h-full bg-gradient-to-tl from-blue-500/10 to-transparent -rotate-12 transform scale-150" />
+      </div>
+
+      <div className="max-w-4xl mx-auto relative">
         {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-purple-500 to-blue-500 bg-clip-text text-transparent">
-            FIND CHEAPEST BTC
-          </h1>
-          <p className="text-gray-400">Compare Bitcoin prices across major providers</p>
+        <div className="text-center mb-16">
+          <div className="inline-block">
+            <h1 className="text-6xl font-black mb-4 bg-gradient-to-r from-violet-500 via-fuchsia-500 to-blue-500 bg-clip-text text-transparent drop-shadow-2xl">
+              FIND CHEAPEST BTC
+            </h1>
+          </div>
+          <p className="text-gray-400 text-lg">Compare real-time Bitcoin prices across major providers</p>
         </div>
         
         {/* Input Section */}
-        <div className="mb-12">
-          <div className="flex items-center gap-4 bg-gray-800/50 p-6 rounded-xl backdrop-blur-sm border border-gray-700/50">
-            <div className="flex-1">
-              <input
-                type="number"
-                value={amount}
-                onChange={(e) => setAmount(Number(e.target.value))}
-                className="w-full bg-transparent text-3xl font-bold outline-none focus:ring-2 focus:ring-purple-500 rounded-lg p-2"
-                placeholder="Enter USD amount"
-              />
+        <div className="mb-16 relative">
+          <div className="absolute inset-0 bg-gradient-to-r from-violet-500/20 to-fuchsia-500/20 blur-3xl" />
+          <div className="relative glass rounded-2xl p-8 border border-white/10">
+            <div className="flex flex-col md:flex-row items-center gap-6">
+              <div className="flex-1 w-full">
+                <label className="block text-gray-400 text-sm font-medium mb-2">Amount in USD</label>
+                <input
+                  type="number"
+                  value={amount}
+                  onChange={(e) => setAmount(Number(e.target.value))}
+                  className="w-full bg-black/30 text-4xl font-bold outline-none focus:ring-2 focus:ring-violet-500 rounded-xl p-4 transition-all duration-300"
+                  placeholder="Enter amount"
+                />
+              </div>
+              <button
+                onClick={fetchPrices}
+                className="px-8 py-4 bg-gradient-to-r from-violet-500 to-fuchsia-500 rounded-xl font-bold text-lg hover:opacity-90 transition-opacity duration-300"
+              >
+                Compare Prices
+              </button>
             </div>
-            <div className="text-3xl font-bold text-gray-400">USD</div>
           </div>
         </div>
 
         {/* Results Section */}
-        <div className="space-y-4">
+        <div className="space-y-6">
           {error && (
-            <div className="bg-red-500/20 border border-red-500/50 text-red-200 p-4 rounded-lg text-center">
-              {error}
+            <div className="bg-red-500/10 border border-red-500/50 text-red-200 p-6 rounded-xl text-center backdrop-blur-sm">
+              <p className="text-lg">{error}</p>
             </div>
           )}
           
           {loading ? (
-            <div className="flex items-center justify-center py-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500"></div>
+            <div className="flex flex-col items-center justify-center py-20">
+              <div className="w-16 h-16 relative">
+                <div className="absolute inset-0 rounded-full border-t-2 border-violet-500 animate-spin" />
+                <div className="absolute inset-2 rounded-full border-r-2 border-fuchsia-500 animate-spin-reverse" />
+              </div>
+              <p className="mt-4 text-gray-400">Fetching latest prices...</p>
             </div>
           ) : (
-            providers.map((provider, index) => (
-              <div
-                key={provider.name}
-                className={`transform transition-all duration-300 hover:scale-[1.02] cursor-pointer`}
-              >
-                <div className={`bg-gradient-to-r ${getProviderColor(index)} p-[1px] rounded-xl`}>
-                  <div className="bg-gray-900 p-6 rounded-xl">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-4">
-                        <img
-                          src={`/images/${provider.name.toLowerCase()}.png`}
-                          alt={provider.name}
-                          className="w-10 h-10 object-contain"
-                        />
-                        <span className="text-xl font-semibold">{provider.name}</span>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-2xl font-bold font-mono">
-                          {formatBTC(provider.btc)} BTC
+            <div className="grid gap-6">
+              {providers.map((provider, index) => (
+                <div
+                  key={provider.name}
+                  className="transform transition-all duration-500 hover:scale-[1.02] hover:-translate-y-1"
+                  style={{ background: getBgPattern(index) }}
+                >
+                  <div className={`bg-gradient-to-r ${getProviderColor(index)} p-[1px] rounded-2xl`}>
+                    <div className="bg-gray-900/90 backdrop-blur-xl p-6 rounded-2xl">
+                      <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                        <div className="flex items-center gap-6">
+                          <div className="w-16 h-16 rounded-full bg-white/5 p-2 backdrop-blur-sm">
+                            <img
+                              src={`/images/${provider.name.toLowerCase()}.png`}
+                              alt={provider.name}
+                              className="w-full h-full object-contain filter drop-shadow-lg"
+                            />
+                          </div>
+                          <div>
+                            <h3 className="text-2xl font-bold">{provider.name}</h3>
+                            <p className="text-gray-400">Best rate provider #{index + 1}</p>
+                          </div>
                         </div>
-                        <div className="text-sm text-gray-400">
-                          ≈ ${(provider.btc * 40000).toFixed(2)} USD
+                        <div className="text-right">
+                          <div className="text-3xl font-bold font-mono tracking-tight">
+                            {formatBTC(provider.btc)} BTC
+                          </div>
+                          <div className="text-gray-400 mt-1">
+                            ≈ ${(provider.btc * 42000).toLocaleString()} USD
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))
+              ))}
+            </div>
           )}
         </div>
 
         {/* Footer */}
-        <div className="mt-12 text-center text-gray-500 text-sm">
-          <p>Prices update in real-time. All fees included.</p>
-          <p className="mt-2">
-            Made with ❤️ by{' '}
-            <a
-              href="https://github.com/aal51282"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-purple-500 hover:text-purple-400"
-            >
-              aal51282
-            </a>
-          </p>
-        </div>
+        <footer className="mt-16 text-center">
+          <div className="glass rounded-xl p-6 border border-white/10">
+            <p className="text-gray-400">
+              Prices update in real-time. All fees and network costs included.
+            </p>
+            <p className="mt-4 text-sm">
+              Made with{' '}
+              <span className="text-red-500">❤️</span> by{' '}
+              <a
+                href="https://github.com/aal51282"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-violet-400 hover:text-violet-300 font-medium"
+              >
+                aal51282
+              </a>
+            </p>
+          </div>
+        </footer>
       </div>
     </div>
   );
