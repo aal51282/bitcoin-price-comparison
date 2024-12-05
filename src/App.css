@@ -1,0 +1,83 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.bg-gradient-text {
+  background: linear-gradient(90deg, #8B5CF6 0%, #3B82F6 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+body {
+    background-color: #1a1a2e;
+    color: white;
+    font-family: Arial, sans-serif;
+  }
+  
+  .App {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+  }
+  
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    color: #8a2be2;
+  }
+  
+  .input-container {
+    background-color: #16213e;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    margin-bottom: 2rem;
+  }
+  
+  input {
+    background-color: transparent;
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+    width: 100px;
+  }
+  
+  .offers-container {
+    width: 100%;
+    max-width: 500px;
+  }
+  
+  .offer {
+    display: flex;
+    align-items: center;
+    background-color: #16213e;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 5px;
+  }
+  
+  .offer img {
+    width: 30px;
+    height: 30px;
+    margin-right: 1rem;
+  }
+  
+  .provider-name {
+    flex-grow: 1;
+    font-weight: bold;
+  }
+  
+  .btc-amount {
+    font-family: monospace;
+  }
