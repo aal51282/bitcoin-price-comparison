@@ -99,13 +99,26 @@ async def get_transak_price(amount: float) -> float:
         'isBuyOrSell': 'BUY',
         'fiatAmount': str(amount),
         'partnerApiKey': '02624956-010b-4775-8e31-7b9c8b82df76',
-        'network': 'bitcoin',
+        'network': 'mainnet',
         'quoteCountryCode': 'US'
+    }
+    
+    headers = {
+        'accept': 'application/json, text/plain, */*',
+        'origin': 'https://global.transak.com',
+        'referer': 'https://global.transak.com/',
+        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+        'sec-ch-ua': '"Google Chrome";v="131", "Chromium";v="131", "Not_A Brand";v="24"',
+        'sec-ch-ua-mobile': '?0',
+        'sec-ch-ua-platform': '"Windows"',
+        'sec-fetch-dest': 'empty',
+        'sec-fetch-mode': 'cors',
+        'sec-fetch-site': 'same-site'
     }
     
     async with httpx.AsyncClient() as client:
         try:
-            response = await client.get(url, params=params)
+            response = await client.get(url, params=params, headers=headers)
             print(f"Transak request URL: {response.url}")
             print(f"Transak response: {response.status_code}, {response.text}")
             if response.status_code == 200:
