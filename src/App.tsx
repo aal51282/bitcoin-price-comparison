@@ -4,36 +4,10 @@ import './App.css';
 interface Provider {
   name: string;
   btc: number;
-  actualUsdAmount: number;
-}
-
-interface GuardarianResponse {
-  converted_amount?: {
-    amount: string;
-  };
-}
-
-interface PaybisResponse {
-  amountToEquivalent?: {
-    amount: string;
-  };
-}
-
-interface MoonPayResponse {
-  baseCurrencyAmount?: number;
-}
-
-interface ApiProvider extends GuardarianResponse, PaybisResponse, MoonPayResponse {
-  name: string;
-  btc: number;
-}
-
-interface ApiResponse {
-  providers: ApiProvider[];
 }
 
 function App() {
-  const [amount, setAmount] = useState<number>(100);
+  const [amount, setAmount] = useState<number>(300);
   const [providers, setProviders] = useState<Provider[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
@@ -47,18 +21,8 @@ function App() {
     setError('');
     try {
       const response = await fetch(`http://localhost:8000/api/compare/${amount}`);
-      const data: ApiResponse = await response.json();
-      
-      const mappedProviders = data.providers.map((provider: ApiProvider) => ({
-        name: provider.name,
-        btc: provider.btc,
-        actualUsdAmount: provider.name === 'Guardarian' ? parseFloat(provider.converted_amount?.amount || amount.toString()) :
-                        provider.name === 'Paybis' ? parseFloat(provider.amountToEquivalent?.amount || amount.toString()) :
-                        provider.name === 'MoonPay' ? (provider.baseCurrencyAmount || amount) :
-                        amount
-      }));
-      
-      setProviders(mappedProviders);
+      const data = await response.json();
+      setProviders(data.providers);
     } catch (error) {
       console.error('Error fetching prices:', error);
       setError('Failed to fetch prices. Please try again.');
@@ -69,15 +33,6 @@ function App() {
 
   const formatBTC = (value: number): string => {
     return value.toFixed(8);
-  };
-
-  const formatUSD = (value: number): string => {
-    return value.toLocaleString('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    });
   };
 
   const getProviderColor = (index: number): string => {
@@ -163,7 +118,7 @@ function App() {
             </div>
           </div>
         </div>
-        
+
         {/* Input Section */}
         <div className="mb-16 relative">
           <div className="absolute inset-0 bg-gradient-to-r from-violet-500/20 to-fuchsia-500/20 blur-3xl" />
@@ -258,17 +213,6 @@ function App() {
                           <div className="text-right flex flex-col items-end">
                             <div className="text-3xl font-bold font-mono tracking-tight text-white">
                               {formatBTC(provider.btc)} BTC
-                            </div>
-                            <div className="text-gray-300 mt-1">
-                              {formatUSD(provider.actualUsdAmount)} USD
-                              {provider.actualUsdAmount < amount && (
-                                <span className="text-xs ml-2 text-gray-400">
-                                  (after fees)
-                                </span>
-                              )}
-                            </div>
-                            <div className="text-xs text-gray-400 mt-0.5">
-                              {formatUSD(amount - provider.actualUsdAmount)} in fees
                             </div>
                             <a
                               href={getProviderUrl(provider.name)}
