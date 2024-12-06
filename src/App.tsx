@@ -55,6 +55,16 @@ function App() {
     return patterns[index] || patterns[0];
   };
 
+  const getProviderUrl = (name: string): string => {
+    const urls: { [key: string]: string } = {
+      'Guardarian': 'https://guardarian.com',
+      'Paybis': 'https://paybis.com',
+      'Transak': 'https://transak.com',
+      'MoonPay': 'https://www.moonpay.com'
+    };
+    return urls[name] || '#';
+  };
+
   return (
     <div className="min-h-screen bg-[#0A0B1E] bg-gradient-to-br from-gray-900 via-[#1a1b3d] to-black text-white p-4 md:p-8 relative overflow-hidden">
       {/* Background decorative elements */}
@@ -167,13 +177,34 @@ function App() {
                             <p className="text-gray-400">Best rate provider #{index + 1}</p>
                           </div>
                         </div>
-                        <div className="text-right">
+                        <div className="text-right flex flex-col items-end">
                           <div className="text-3xl font-bold font-mono tracking-tight">
                             {formatBTC(provider.btc)} BTC
                           </div>
                           <div className="text-gray-400 mt-1">
                             ≈ ${(provider.btc * 42000).toLocaleString()} USD
                           </div>
+                          <a
+                            href={getProviderUrl(provider.name)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="mt-3 inline-flex items-center gap-2 text-sm text-violet-400 hover:text-violet-300 transition-colors"
+                          >
+                            Visit {provider.name}
+                            <svg 
+                              className="w-4 h-4" 
+                              fill="none" 
+                              stroke="currentColor" 
+                              viewBox="0 0 24 24"
+                            >
+                              <path 
+                                strokeLinecap="round" 
+                                strokeLinejoin="round" 
+                                strokeWidth="2" 
+                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                              />
+                            </svg>
+                          </a>
                         </div>
                       </div>
                     </div>
