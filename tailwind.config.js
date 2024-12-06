@@ -9,7 +9,7 @@ export default {
       animation: {
         'spin-reverse': 'spin-reverse 1s linear infinite',
         'float': 'float 6s ease-in-out infinite',
-        'pulse-slow': 'pulse 4s ease-in-out infinite',
+        'pulse-slow': 'pulse-slow 8s ease-in-out infinite',
       },
       keyframes: {
         'spin-reverse': {
@@ -20,9 +20,9 @@ export default {
           '0%, 100%': { transform: 'translateY(0px)' },
           '50%': { transform: 'translateY(-10px)' },
         },
-        'pulse': {
-          '0%, 100%': { transform: 'scale(1)' },
-          '50%': { transform: 'scale(1.05)' },
+        'pulse-slow': {
+          '0%, 100%': { transform: 'scale(1)', opacity: '1' },
+          '50%': { transform: 'scale(1.01)', opacity: '0.98' },
         },
       },
     },

@@ -7,7 +7,7 @@ interface Provider {
 }
 
 function App() {
-  const [amount, setAmount] = useState<number>(100);
+  const [amount, setAmount] = useState<number>(300);
   const [providers, setProviders] = useState<Provider[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
@@ -63,6 +63,13 @@ function App() {
       'MoonPay': 'https://www.moonpay.com'
     };
     return urls[name] || '#';
+  };
+
+  const getBestProvider = (): number => {
+    if (providers.length === 0) return -1;
+    return providers.reduce((maxIndex, current, currentIndex, array) => 
+      current.btc > array[maxIndex].btc ? currentIndex : maxIndex
+    , 0);
   };
 
   return (
@@ -155,62 +162,93 @@ function App() {
             </div>
           ) : (
             <div className="grid gap-6">
-              {providers.map((provider, index) => (
-                <div
-                  key={provider.name}
-                  className="transform transition-all duration-500 hover:scale-[1.02] hover:-translate-y-1"
-                  style={{ background: getBgPattern(index) }}
-                >
-                  <div className={`bg-gradient-to-r ${getProviderColor(index)} p-[1px] rounded-2xl`}>
-                    <div className="bg-gray-900/90 backdrop-blur-xl p-6 rounded-2xl">
-                      <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-                        <div className="flex items-center gap-6">
-                          <div className="w-16 h-16 rounded-full bg-white/5 p-2 backdrop-blur-sm">
-                            <img
-                              src={`/images/${provider.name.toLowerCase()}.png`}
-                              alt={provider.name}
-                              className="w-full h-full object-contain filter drop-shadow-lg"
-                            />
-                          </div>
-                          <div>
-                            <h3 className="text-2xl font-bold">{provider.name}</h3>
-                            <p className="text-gray-400">Best rate provider #{index + 1}</p>
-                          </div>
-                        </div>
-                        <div className="text-right flex flex-col items-end">
-                          <div className="text-3xl font-bold font-mono tracking-tight">
-                            {formatBTC(provider.btc)} BTC
-                          </div>
-                          <div className="text-gray-400 mt-1">
-                            ≈ ${(provider.btc * 42000).toLocaleString()} USD
-                          </div>
-                          <a
-                            href={getProviderUrl(provider.name)}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="mt-3 inline-flex items-center gap-2 text-sm text-violet-400 hover:text-violet-300 transition-colors"
-                          >
-                            Visit {provider.name}
-                            <svg 
-                              className="w-4 h-4" 
-                              fill="none" 
-                              stroke="currentColor" 
-                              viewBox="0 0 24 24"
-                            >
-                              <path 
-                                strokeLinecap="round" 
-                                strokeLinejoin="round" 
-                                strokeWidth="2" 
-                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+              {providers.map((provider, index) => {
+                const isBestProvider = index === getBestProvider();
+                return (
+                  <div
+                    key={provider.name}
+                    className={`transform transition-all duration-500 hover:scale-[1.02] hover:-translate-y-1 relative ${
+                      isBestProvider ? 'animate-pulse-slow' : ''
+                    }`}
+                    style={{ background: getBgPattern(index) }}
+                  >
+                    {isBestProvider && (
+                      <div className="absolute -top-3 -right-3 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full p-2 shadow-lg transform rotate-12">
+                        <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                      </div>
+                    )}
+                    <div className={`bg-gradient-to-r ${getProviderColor(index)} p-[1px] rounded-2xl ${
+                      isBestProvider ? 'shadow-lg shadow-violet-500/20' : ''
+                    }`}>
+                      <div className={`bg-gray-900/95 backdrop-blur-xl p-6 rounded-2xl ${
+                        isBestProvider ? 'bg-opacity-95' : ''
+                      }`}>
+                        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                          <div className="flex items-center gap-6">
+                            <div className={`w-16 h-16 rounded-full bg-white/5 p-2 backdrop-blur-sm ${
+                              isBestProvider ? 'ring-2 ring-yellow-400/50' : ''
+                            }`}>
+                              <img
+                                src={`/images/${provider.name.toLowerCase()}.png`}
+                                alt={provider.name}
+                                className="w-full h-full object-contain filter drop-shadow-lg"
                               />
-                            </svg>
-                          </a>
+                            </div>
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <h3 className="text-2xl font-bold text-white">{provider.name}</h3>
+                                {isBestProvider && (
+                                  <span className="text-yellow-400 text-sm font-semibold px-2 py-1 bg-yellow-400/10 rounded-full">
+                                    Best Rate
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-gray-300">
+                                {isBestProvider ? 'Highest BTC for your money' : `Provider #${index + 1}`}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="text-right flex flex-col items-end">
+                            <div className="text-3xl font-bold font-mono tracking-tight text-white">
+                              {formatBTC(provider.btc)} BTC
+                            </div>
+                            <div className="text-gray-300 mt-1">
+                              ≈ ${(provider.btc * 42000).toLocaleString()} USD
+                            </div>
+                            <a
+                              href={getProviderUrl(provider.name)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className={`mt-3 inline-flex items-center gap-2 text-sm font-medium ${
+                                isBestProvider 
+                                  ? 'text-yellow-400 hover:text-yellow-300' 
+                                  : 'text-violet-400 hover:text-violet-300'
+                              } transition-colors`}
+                            >
+                              Visit {provider.name}
+                              <svg 
+                                className="w-4 h-4" 
+                                fill="none" 
+                                stroke="currentColor" 
+                                viewBox="0 0 24 24"
+                              >
+                                <path 
+                                  strokeLinecap="round" 
+                                  strokeLinejoin="round" 
+                                  strokeWidth="2" 
+                                  d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                                />
+                              </svg>
+                            </a>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
