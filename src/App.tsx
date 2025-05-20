@@ -344,6 +344,12 @@ function App() {
                                   ? "Highest BTC for your money"
                                   : `Provider #${index + 1}`}
                               </p>
+                              {provider.name === "Transak" && amount > 3000 && (
+                                <p className="text-red-400 text-sm mt-1">
+                                  Note: Information will not display for
+                                  amounts over $3000
+                                </p>
+                              )}
                             </div>
                           </div>
                           <div className="text-right flex flex-col items-end">
