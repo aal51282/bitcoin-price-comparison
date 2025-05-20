@@ -62,6 +62,21 @@ function App() {
     return value.toFixed(8);
   };
 
+  const calculatePriceDifference = (providerBtc: number): number => {
+    if (!currentBitcoinPrice || !providerBtc) return 0;
+    const idealBtc = calculateBTCAmount(amount, currentBitcoinPrice);
+    return (providerBtc - idealBtc) * currentBitcoinPrice;
+  };
+
+  const formatPriceDifference = (diff: number): string => {
+    if (Math.abs(diff) > amount * 0.1) {
+      return "Price comparison unavailable";
+    }
+    return `${diff >= 0 ? "+" : ""}$${Math.abs(diff).toFixed(2)} USD ${
+      diff >= 0 ? "more" : "less"
+    } than CoinGecko`;
+  };
+
   const getProviderColor = (index: number): string => {
     const colors = [
       "from-violet-500 to-fuchsia-500",
@@ -237,7 +252,7 @@ function App() {
                       CoinGecko Estimate
                     </h3>
                     <p className="text-sm text-gray-400">
-                      Market reference price
+                      Current price of Bitcoin
                     </p>
                   </div>
                 </div>
@@ -346,8 +361,8 @@ function App() {
                               </p>
                               {provider.name === "Transak" && amount > 3000 && (
                                 <p className="text-red-400 text-sm mt-1">
-                                  Note: Information will not display for
-                                  amounts over $3000
+                                  Note: Information will not display for amounts
+                                  over $3000
                                 </p>
                               )}
                             </div>
@@ -356,6 +371,19 @@ function App() {
                             <div className="text-3xl font-bold font-mono tracking-tight text-white">
                               {formatBTC(provider.btc)} BTC
                             </div>
+                            {currentBitcoinPrice && (
+                              <div
+                                className={`text-sm mt-1 ${
+                                  calculatePriceDifference(provider.btc) >= 0
+                                    ? "text-green-400"
+                                    : "text-red-400"
+                                }`}
+                              >
+                                {formatPriceDifference(
+                                  calculatePriceDifference(provider.btc)
+                                )}
+                              </div>
+                            )}
                             <a
                               href={getProviderUrl(provider.name)}
                               target="_blank"
