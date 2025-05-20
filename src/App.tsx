@@ -11,10 +11,35 @@ function App() {
   const [providers, setProviders] = useState<Provider[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
+  const [currentBitcoinPrice, setCurrentBitcoinPrice] = useState<number | null>(
+    null
+  );
+  const [priceLoading, setPriceLoading] = useState<boolean>(false);
 
   useEffect(() => {
     fetchPrices();
+    fetchCurrentBitcoinPrice();
   }, [amount]);
+
+  const fetchCurrentBitcoinPrice = async () => {
+    setPriceLoading(true);
+    try {
+      const response = await fetch(
+        "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd"
+      );
+      const data = await response.json();
+      setCurrentBitcoinPrice(data.bitcoin.usd);
+    } catch (error) {
+      console.error("Error fetching Bitcoin price:", error);
+    } finally {
+      setPriceLoading(false);
+    }
+  };
+
+  const calculateBTCAmount = (usdAmount: number, btcPrice: number): number => {
+    if (!btcPrice) return 0;
+    return usdAmount / btcPrice;
+  };
 
   const fetchPrices = async () => {
     setLoading(true);
@@ -183,6 +208,63 @@ function App() {
             </div>
           </div>
         </div>
+
+        {/* Current Bitcoin Price */}
+        {(currentBitcoinPrice || priceLoading) && (
+          <div className="mb-8 relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 blur-3xl" />
+            <div className="relative glass rounded-2xl p-6 border border-white/10">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-yellow-500/20 rounded-full flex items-center justify-center">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      className="w-6 h-6 text-yellow-500"
+                    >
+                      <path d="M11.584 2.376a.75.75 0 01.832 0l9 6a.75.75 0 11-.832 1.248L12 3.901 3.416 9.624a.75.75 0 01-.832-1.248l9-6z" />
+                      <path
+                        fillRule="evenodd"
+                        d="M20.25 10.332v9.918H21a.75.75 0 010 1.5H3a.75.75 0 010-1.5h.75v-9.918a.75.75 0 01.634-.74A49.109 49.109 0 0112 9c2.59 0 5.134.202 7.616.592a.75.75 0 01.634.74zm-7.5 2.418a.75.75 0 00-1.5 0v6.75a.75.75 0 001.5 0v-6.75zm3-.75a.75.75 0 01.75.75v6.75a.75.75 0 01-1.5 0v-6.75a.75.75 0 01.75-.75zM9 12.75a.75.75 0 00-1.5 0v6.75a.75.75 0 001.5 0v-6.75z"
+                        clipRule="evenodd"
+                      />
+                      <path d="M12 7.875a1.125 1.125 0 100-2.25 1.125 1.125 0 000 2.25z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-medium text-white">
+                      CoinGecko Estimate
+                    </h3>
+                    <p className="text-sm text-gray-400">
+                      Market reference price
+                    </p>
+                  </div>
+                </div>
+                {priceLoading ? (
+                  <div className="flex items-center space-x-2">
+                    <div className="w-5 h-5 border-t-2 border-yellow-500 rounded-full animate-spin"></div>
+                    <span className="text-gray-400">Loading price...</span>
+                  </div>
+                ) : (
+                  <div className="text-right">
+                    <div className="text-3xl font-bold text-yellow-500">
+                      {currentBitcoinPrice
+                        ? formatBTC(
+                            calculateBTCAmount(amount, currentBitcoinPrice)
+                          )
+                        : "0.00000000"}{" "}
+                      BTC
+                    </div>
+                    <div className="text-sm text-gray-400">
+                      for ${amount.toLocaleString()} USD
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Results Section */}
         <div className="space-y-6">

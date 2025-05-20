@@ -40,8 +40,8 @@ A real-time Bitcoin price comparison tool that helps users find the best BTC rat
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/aal51282/coins-table
-cd bitcoin-tracker
+git clone https://github.com/aal51282/bitcoin-price-comparison
+cd bitcoin-price-comparison
 ```
 
 2. Set up the backend:
@@ -53,7 +53,7 @@ python main.py
 
 3. Set up the frontend:
 ```bash
-cd ../frontend
+cd ..
 npm install
 npm run dev
 ```
