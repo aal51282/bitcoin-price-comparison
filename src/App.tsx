@@ -22,13 +22,13 @@ function App() {
     fetchCurrentBitcoinPrice();
   }, [amount]);
 
-  // Auto-refresh every 20 seconds
+  // Auto-refresh every 60 seconds
   useEffect(() => {
     const refreshInterval = setInterval(() => {
       fetchPrices();
       fetchCurrentBitcoinPrice();
       setLastRefreshTime(new Date());
-    }, 20000); // 20 seconds
+    }, 60000); // 60 seconds (1 minute)
 
     return () => clearInterval(refreshInterval); // Cleanup on unmount
   }, [amount]); // Re-setup interval if amount changes
@@ -486,7 +486,7 @@ function App() {
             </p>
             <p className="text-sm text-gray-400 mt-2">
               Last refresh: {lastRefreshTime.toLocaleTimeString()}
-              <span className="ml-2">(Auto-refreshes every 20 seconds)</span>
+              <span className="ml-2">(Auto-refreshes every minute)</span>
             </p>
             <p className="mt-4 text-sm">
               Made with <span className="text-red-500">❤️</span> by{" "}
