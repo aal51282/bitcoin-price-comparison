@@ -107,6 +107,34 @@ function App() {
     return urls[name] || "#";
   };
 
+  const getNumberBadgeStyle = (
+    index: number
+  ): { bg: string; size: string; textSize: string } => {
+    const styles = [
+      {
+        bg: "from-yellow-400 to-orange-500",
+        size: "w-9 h-9",
+        textSize: "text-lg",
+      }, // 1st position (Best)
+      {
+        bg: "from-gray-300 to-gray-400",
+        size: "w-8 h-8",
+        textSize: "text-base",
+      }, // 2nd position
+      {
+        bg: "from-amber-700 to-amber-800",
+        size: "w-7 h-7",
+        textSize: "text-sm",
+      }, // 3rd position
+      {
+        bg: "from-violet-500 to-fuchsia-500",
+        size: "w-7 h-7",
+        textSize: "text-sm",
+      }, // Others
+    ];
+    return styles[Math.min(index, 3)];
+  };
+
   const getBestProvider = (): number => {
     if (providers.length === 0) return -1;
     return providers.reduce(
@@ -334,18 +362,31 @@ function App() {
                         >
                           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
                             <div className="flex items-center gap-6">
-                              <div
-                                className={`w-16 h-16 rounded-full bg-white/5 p-2 backdrop-blur-sm ${
-                                  isBestProvider
-                                    ? "ring-2 ring-yellow-400/50"
-                                    : ""
-                                }`}
-                              >
-                                <img
-                                  src={`/images/${provider.name.toLowerCase()}.png`}
-                                  alt={provider.name}
-                                  className="w-full h-full object-contain filter drop-shadow-lg"
-                                />
+                              <div className="relative">
+                                <div
+                                  className={`absolute -left-3 -top-3 ${
+                                    getNumberBadgeStyle(index).size
+                                  } rounded-full bg-gradient-to-r ${
+                                    getNumberBadgeStyle(index).bg
+                                  } flex items-center justify-center text-white font-bold shadow-lg z-10 ${
+                                    getNumberBadgeStyle(index).textSize
+                                  }`}
+                                >
+                                  {index + 1}
+                                </div>
+                                <div
+                                  className={`w-16 h-16 rounded-full bg-white/5 p-2 backdrop-blur-sm ${
+                                    isBestProvider
+                                      ? "ring-2 ring-yellow-400/50"
+                                      : ""
+                                  }`}
+                                >
+                                  <img
+                                    src={`/images/${provider.name.toLowerCase()}.png`}
+                                    alt={provider.name}
+                                    className="w-full h-full object-contain filter drop-shadow-lg"
+                                  />
+                                </div>
                               </div>
                               <div>
                                 <div className="flex items-center gap-2">
