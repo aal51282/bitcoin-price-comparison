@@ -15,11 +15,23 @@ function App() {
     null
   );
   const [priceLoading, setPriceLoading] = useState<boolean>(false);
+  const [lastRefreshTime, setLastRefreshTime] = useState<Date>(new Date());
 
   useEffect(() => {
     fetchPrices();
     fetchCurrentBitcoinPrice();
   }, [amount]);
+
+  // Auto-refresh every 20 seconds
+  useEffect(() => {
+    const refreshInterval = setInterval(() => {
+      fetchPrices();
+      fetchCurrentBitcoinPrice();
+      setLastRefreshTime(new Date());
+    }, 20000); // 20 seconds
+
+    return () => clearInterval(refreshInterval); // Cleanup on unmount
+  }, [amount]); // Re-setup interval if amount changes
 
   const fetchCurrentBitcoinPrice = async () => {
     setPriceLoading(true);
@@ -471,6 +483,10 @@ function App() {
           <div className="glass rounded-xl p-6 border border-white/10">
             <p className="text-gray-400">
               Prices update in real-time. All fees and network costs included.
+            </p>
+            <p className="text-sm text-gray-400 mt-2">
+              Last refresh: {lastRefreshTime.toLocaleTimeString()}
+              <span className="ml-2">(Auto-refreshes every 20 seconds)</span>
             </p>
             <p className="mt-4 text-sm">
               Made with <span className="text-red-500">❤️</span> by{" "}
