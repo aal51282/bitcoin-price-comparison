@@ -488,17 +488,6 @@ function App() {
               Last refresh: {lastRefreshTime.toLocaleTimeString()}
               <span className="ml-2">(Auto-refreshes every minute)</span>
             </p>
-            <p className="mt-4 text-sm">
-              Made with <span className="text-red-500">❤️</span> by{" "}
-              <a
-                href="https://github.com/aal51282"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-violet-400 hover:text-violet-300 font-medium"
-              >
-                aal51282
-              </a>
-            </p>
           </div>
         </footer>
       </div>
